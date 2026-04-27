@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animatedElements.forEach(el => observer.observe(el));
 
     /* =========================================
-       4. Contact Form Submission (Prevent Default for now)
+       4. Contact Form Submission
     ========================================= */
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
@@ -107,8 +107,15 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = 'Sending... <i class="fas fa-spinner fa-spin"></i>';
             btn.disabled = true;
             
-            // Simulate API call
-            setTimeout(() => {
+            // Real API call using FormSubmit.co
+            const formData = new FormData(contactForm);
+
+            fetch("https://formsubmit.co/ajax/shadildigitalmarketing@gmail.com", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
                 btn.innerHTML = 'Message Sent! <i class="fas fa-check"></i>';
                 btn.classList.replace('btn-primary', 'btn-secondary');
                 contactForm.reset();
@@ -118,7 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.classList.replace('btn-secondary', 'btn-primary');
                     btn.disabled = false;
                 }, 3000);
-            }, 1500);
+            })
+            .catch(error => {
+                console.error(error);
+                btn.innerHTML = 'Error! <i class="fas fa-exclamation-triangle"></i>';
+                btn.classList.replace('btn-primary', 'btn-danger');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('btn-danger', 'btn-primary');
+                    btn.disabled = false;
+                }, 3000);
+            });
         });
     }
 });
